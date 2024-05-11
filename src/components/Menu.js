@@ -8,10 +8,14 @@ const Menu = () => {
 		setMenuOpen(!isMenuOpen);
 	};
 
+	const closeMenu = () => {
+		setMenuOpen(false);
+	};
+
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 			<div className="container">
-				<Link className="navbar-brand" to="/">
+				<Link className="navbar-brand" to="/" onClick={closeMenu}>
 					Comparativo de Preços Paraguai
 				</Link>
 				<button
@@ -28,27 +32,47 @@ const Menu = () => {
 				>
 					<ul className="navbar-nav ml-auto">
 						<li className="nav-item">
-							<Link className="nav-link" to="/dashboard">
+							<Link
+								className="nav-link"
+								to="/dashboard"
+								onClick={closeMenu}
+							>
 								Dashboard
 							</Link>
 						</li>
 						<li className="nav-item">
-							<Link className="nav-link" to="/cadastrar-loja">
+							<Link
+								className="nav-link"
+								to="/cadastrar-loja"
+								onClick={closeMenu}
+							>
 								Cadastrar Loja
 							</Link>
 						</li>
 						<li className="nav-item">
-							<Link className="nav-link" to="/cadastrar-produto">
+							<Link
+								className="nav-link"
+								to="/cadastrar-produto"
+								onClick={closeMenu}
+							>
 								Cadastrar Produto
 							</Link>
 						</li>
 						<li className="nav-item">
-							<Link className="nav-link" to="/cadastrar-preco">
+							<Link
+								className="nav-link"
+								to="/cadastrar-preco"
+								onClick={closeMenu}
+							>
 								Cadastrar Preço
 							</Link>
 						</li>
 						<li className="nav-item">
-							<Link className="nav-link" to="/listar-produtos">
+							<Link
+								className="nav-link"
+								to="/listar-produtos"
+								onClick={closeMenu}
+							>
 								Listar Produtos
 							</Link>
 						</li>

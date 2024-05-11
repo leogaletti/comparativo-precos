@@ -3,9 +3,8 @@ import { useParams } from "react-router-dom";
 
 const PrecoProduto = () => {
 	const [precos, setPrecos] = useState([]);
-	const [ordenacao, setOrdenacao] = useState("asc"); // Estado para controlar a ordenação
+	const [ordenacao, setOrdenacao] = useState(""); // Estado para controlar a ordenação atual
 	const { id } = useParams();
-	const [nomeProduto, setNomeProduto] = useState(""); // Estado para armazenar o nome do produto
 
 	useEffect(() => {
 		const precosCadastrados =
@@ -14,13 +13,6 @@ const PrecoProduto = () => {
 			(preco) => preco.produto === id
 		);
 		setPrecos(precosProduto);
-
-		const produtosSalvos =
-			JSON.parse(localStorage.getItem("produtos")) || [];
-		const produto = produtosSalvos.find((produto) => produto.id === id);
-		if (produto) {
-			setNomeProduto(produto.nome);
-		}
 	}, [id]);
 
 	const buscarNomeLoja = (idLoja) => {
@@ -31,7 +23,7 @@ const PrecoProduto = () => {
 
 	const converterParaReal = (valorDolar, cotacaoDolar) => {
 		const valorReal = valorDolar * cotacaoDolar;
-		return `R$ ${valorReal.toFixed(2)}`;
+		return valorReal;
 	};
 
 	const buscarCotacaoDolar = (idLoja) => {
@@ -40,37 +32,71 @@ const PrecoProduto = () => {
 		return loja ? loja.cotacaoDolar : 0;
 	};
 
-	// Função para ordenar os preços
-	const handleOrdenarPrecos = () => {
+	// Função para ordenar os itens
+	const ordenarPreco = (criterio) => {
 		const precosOrdenados = [...precos];
-		if (ordenacao === "asc") {
+		if (criterio === "dolar") {
 			precosOrdenados.sort((a, b) => a.valorDolar - b.valorDolar);
-			setOrdenacao("desc");
-		} else {
-			precosOrdenados.sort((a, b) => b.valorDolar - a.valorDolar);
-			setOrdenacao("asc");
+		} else if (criterio === "real") {
+			precosOrdenados.sort((a, b) => {
+				const cotacaoDolarA = buscarCotacaoDolar(a.loja);
+				const cotacaoDolarB = buscarCotacaoDolar(b.loja);
+				const valorRealA = converterParaReal(
+					a.valorDolar,
+					cotacaoDolarA
+				);
+				const valorRealB = converterParaReal(
+					b.valorDolar,
+					cotacaoDolarB
+				);
+				return valorRealA - valorRealB;
+			});
 		}
 		setPrecos(precosOrdenados);
+		setOrdenacao(criterio); // Atualizar o estado de ordenação
+	};
+
+	const handleExcluirPreco = (idPreco) => {
+		const confirmacao = window.confirm(
+			"Tem certeza que deseja excluir esse preço?"
+		);
+		if (confirmacao) {
+			const precosAtualizados = precos.filter(
+				(preco) => preco.id !== idPreco
+			);
+			setPrecos(precosAtualizados);
+			// Atualizar o localStorage com os preços atualizados
+			localStorage.setItem("precos", JSON.stringify(precosAtualizados));
+		}
 	};
 
 	return (
 		<div className="container mt-5">
-			{/* Nome do produto no topo da página */}
-			<h2 className="mb-4">Preços do Produto - {nomeProduto}</h2>
-			{/* Botão de ordenação */}
-			<button
-				className="btn btn-primary mb-3"
-				onClick={handleOrdenarPrecos}
-			>
-				Ordenar Preços {ordenacao === "asc" ? "↓" : "↑"}
-			</button>
-			{/* Tabela de preços */}
-			<table className="table">
+			<h2>Preços do Produto</h2>
+			{/* Botões para ordenar */}
+			<div className="btn-group mt-3" role="group">
+				<button
+					type="button"
+					className="btn btn-primary"
+					onClick={() => ordenarPreco("dolar")}
+				>
+					Ordenar por Valor em Dólar
+				</button>
+				<button
+					type="button"
+					className="btn btn-primary"
+					onClick={() => ordenarPreco("real")}
+				>
+					Ordenar por Valor em Real
+				</button>
+			</div>
+			<table className="table table-striped mt-3">
 				<thead>
 					<tr>
 						<th>Loja</th>
 						<th>Preço em Dólar</th>
 						<th>Preço em Real</th>
+						<th>Ações</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -78,11 +104,22 @@ const PrecoProduto = () => {
 						<tr key={preco.id}>
 							<td>{buscarNomeLoja(preco.loja)}</td>
 							<td>${preco.valorDolar.toFixed(2)}</td>
+							{/* Mostrar o valor convertido de dólar para real */}
 							<td>
+								R${" "}
 								{converterParaReal(
 									preco.valorDolar,
 									buscarCotacaoDolar(preco.loja)
-								)}
+								).toFixed(2)}
+							</td>
+							<td>
+								<button
+									type="button"
+									className="btn btn-danger"
+									onClick={() => handleExcluirPreco(preco.id)}
+								>
+									Excluir
+								</button>
 							</td>
 						</tr>
 					))}

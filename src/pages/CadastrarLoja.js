@@ -1,8 +1,7 @@
-// src/pages/CadastrarLoja.js
-
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import CurrencyInput from "react-currency-masked-input";
 
 const CadastrarLoja = () => {
 	const history = useHistory();
@@ -13,8 +12,8 @@ const CadastrarLoja = () => {
 		setNome(event.target.value);
 	};
 
-	const handleCotacaoDolarChange = (event) => {
-		setCotacaoDolar(event.target.value);
+	const handleCotacaoDolarChange = (event, value) => {
+		setCotacaoDolar(value);
 	};
 
 	const handleSubmit = (event) => {
@@ -22,7 +21,9 @@ const CadastrarLoja = () => {
 		const novaLoja = {
 			id: uuidv4(),
 			nome: nome,
-			cotacaoDolar: parseFloat(cotacaoDolar),
+			cotacaoDolar: parseFloat(
+				cotacaoDolar.replace("R$ ", "").replace(",", ".")
+			),
 		};
 		let lojas = JSON.parse(localStorage.getItem("lojas")) || [];
 		lojas.push(novaLoja);
@@ -54,15 +55,11 @@ const CadastrarLoja = () => {
 					<label htmlFor="cotacaoDolar" className="form-label">
 						Cotação do Dólar:
 					</label>
-					<input
-						type="number"
+					<CurrencyInput
 						className="form-control"
 						id="cotacaoDolar"
 						value={cotacaoDolar}
-						onChange={(event) =>
-							setCotacaoDolar(event.target.value)
-						}
-						step="0.01"
+						onChange={handleCotacaoDolarChange}
 						required
 					/>
 				</div>

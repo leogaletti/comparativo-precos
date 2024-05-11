@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import CurrencyInput from "react-currency-masked-input";
 
 const CadastrarPreco = () => {
 	const [lojas, setLojas] = useState([]);
@@ -24,7 +25,9 @@ const CadastrarPreco = () => {
 			id: uuidv4(),
 			loja: lojaSelecionada,
 			produto: produtoSelecionado,
-			valorDolar: parseFloat(valorDolar),
+			valorDolar: parseFloat(
+				valorDolar.replace("R$ ", "").replace(",", ".")
+			),
 		};
 		const precosCadastrados =
 			JSON.parse(localStorage.getItem("precos")) || [];
@@ -90,13 +93,11 @@ const CadastrarPreco = () => {
 					<label htmlFor="valorDolar" className="form-label">
 						Valor em Dólar:
 					</label>
-					<input
-						type="number"
+					<CurrencyInput
 						id="valorDolar"
 						className="form-control"
 						value={valorDolar}
-						onChange={(event) => setValorDolar(event.target.value)}
-						step="0.01"
+						onChange={(event, value) => setValorDolar(value)}
 						required
 					/>
 				</div>
