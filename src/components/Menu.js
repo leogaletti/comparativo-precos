@@ -1,48 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Menu = () => {
+	const [isMenuOpen, setMenuOpen] = useState(false);
+
+	const toggleMenu = () => {
+		setMenuOpen(!isMenuOpen);
+	};
+
 	return (
-		<nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+		<nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 			<div className="container">
-				<Link to="/" className="navbar-brand">
-					Comparativo de Preços
+				<Link className="navbar-brand" to="/">
+					Comparativo de Preços Paraguai
 				</Link>
 				<button
 					className="navbar-toggler"
 					type="button"
-					data-bs-toggle="collapse"
-					data-bs-target="#navbarNav"
-					aria-controls="navbarNav"
-					aria-expanded="false"
-					aria-label="Toggle navigation"
+					onClick={toggleMenu}
 				>
 					<span className="navbar-toggler-icon"></span>
 				</button>
-				<div className="collapse navbar-collapse" id="navbarNav">
-					<ul className="navbar-nav">
+				<div
+					className={`collapse navbar-collapse ${
+						isMenuOpen ? "show" : ""
+					}`}
+				>
+					<ul className="navbar-nav ml-auto">
 						<li className="nav-item">
-							<Link to="/dashboard" className="nav-link">
+							<Link className="nav-link" to="/dashboard">
 								Dashboard
 							</Link>
 						</li>
 						<li className="nav-item">
-							<Link to="/cadastrar-loja" className="nav-link">
+							<Link className="nav-link" to="/cadastrar-loja">
 								Cadastrar Loja
 							</Link>
 						</li>
 						<li className="nav-item">
-							<Link to="/cadastrar-produto" className="nav-link">
+							<Link className="nav-link" to="/cadastrar-produto">
 								Cadastrar Produto
 							</Link>
 						</li>
 						<li className="nav-item">
-							<Link to="/cadastrar-preco" className="nav-link">
+							<Link className="nav-link" to="/cadastrar-preco">
 								Cadastrar Preço
 							</Link>
 						</li>
 						<li className="nav-item">
-							<Link to="/listar-produtos" className="nav-link">
+							<Link className="nav-link" to="/listar-produtos">
 								Listar Produtos
 							</Link>
 						</li>
