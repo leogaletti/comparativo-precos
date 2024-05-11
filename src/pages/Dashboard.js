@@ -14,9 +14,32 @@ const Dashboard = () => {
 		setLojas(lojasCadastradas);
 	}, []);
 
+	const handleInstallClick = () => {
+		if (window.matchMedia("(display-mode: standalone)").matches) {
+			console.log("Já instalado como PWA.");
+		} else {
+			console.log("Iniciando a instalação como PWA...");
+			window.addEventListener("beforeinstallprompt", (event) => {
+				event.preventDefault();
+				event.prompt();
+			});
+		}
+	};
+
 	return (
 		<div className="container mt-5">
 			<h2>Dashboard</h2>
+			<p>
+				Bem-vindo ao Dashboard! Este é um aplicativo de comparativo de
+				preços. Você pode instalar este aplicativo em seu dispositivo
+				para usá-lo offline. Basta clicar no botão abaixo para instalar.
+			</p>
+			<button
+				className="btn btn-primary mb-3"
+				onClick={handleInstallClick}
+			>
+				Instalar App
+			</button>
 			<div className="row mt-3">
 				<div className="col-md-6">
 					<h3>Produtos Cadastrados</h3>
