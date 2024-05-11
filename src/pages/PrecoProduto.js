@@ -5,10 +5,23 @@ const PrecoProduto = () => {
 	const [precos, setPrecos] = useState([]);
 	const [ordenacao, setOrdenacao] = useState(""); // Estado para controlar a ordenação atual
 	const { id } = useParams();
+	const [nomeProduto, setNomeProduto] = useState(""); // Estado para armazenar o nome do produto
 
 	useEffect(() => {
+		const produtosCadastrados =
+			JSON.parse(localStorage.getItem("produtos")) || [];
 		const precosCadastrados =
 			JSON.parse(localStorage.getItem("precos")) || [];
+
+		// Buscar o nome do produto correspondente ao ID
+		const produto = produtosCadastrados.find(
+			(produto) => produto.id === id
+		);
+		if (produto) {
+			setNomeProduto(produto.nome);
+		}
+
+		// Filtrar os preços do produto atual
 		const precosProduto = precosCadastrados.filter(
 			(preco) => preco.produto === id
 		);
@@ -72,7 +85,7 @@ const PrecoProduto = () => {
 
 	return (
 		<div className="container mt-5">
-			<h2>Preços do Produto</h2>
+			<h2>Preços do Produto - {nomeProduto}</h2>
 			{/* Botões para ordenar */}
 			<div className="btn-group mt-3" role="group">
 				<button
