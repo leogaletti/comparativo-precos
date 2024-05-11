@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 
 const Dashboard = () => {
 	const [produtos, setProdutos] = useState([]);
@@ -14,44 +13,41 @@ const Dashboard = () => {
 		setLojas(lojasCadastradas);
 	}, []);
 
-	const handleInstallClick = () => {
-		if (window.matchMedia("(display-mode: standalone)").matches) {
-			console.log("Já instalado como PWA.");
-		} else {
-			console.log("Iniciando a instalação como PWA...");
-			window.addEventListener("beforeinstallprompt", (event) => {
-				event.preventDefault();
-				event.prompt();
+	const handleInstall = () => {
+		if (deferredPrompt) {
+			deferredPrompt.prompt();
+			deferredPrompt.userChoice.then((choiceResult) => {
+				if (choiceResult.outcome === "accepted") {
+					console.log("User accepted the A2HS prompt");
+				} else {
+					console.log("User dismissed the A2HS prompt");
+				}
+				deferredPrompt = null;
 			});
 		}
 	};
 
+	let deferredPrompt;
+
+	window.addEventListener("beforeinstallprompt", (e) => {
+		// Prevent Chrome 67 and earlier from automatically showing the prompt
+		e.preventDefault();
+		// Stash the event so it can be triggered later.
+		deferredPrompt = e;
+		// Update UI notify the user they can add to home screen
+		//btnAdd.style.display = 'block';
+	});
+
 	return (
 		<div className="container mt-5">
 			<h2>Dashboard</h2>
-			<p>
-				Bem-vindo ao Dashboard! Este é um aplicativo de comparativo de
-				preços. Você pode instalar este aplicativo em seu dispositivo
-				para usá-lo offline. Basta clicar no botão abaixo para instalar.
-			</p>
-			<button
-				className="btn btn-primary mb-3"
-				onClick={handleInstallClick}
-			>
-				Instalar App
-			</button>
 			<div className="row mt-3">
 				<div className="col-md-6">
 					<h3>Produtos Cadastrados</h3>
 					<ul className="list-group">
 						{produtos.map((produto) => (
 							<li key={produto.id} className="list-group-item">
-								<Link
-									to={`/preco-produto/${produto.id}`}
-									className="text-decoration-none"
-								>
-									{produto.nome}
-								</Link>
+								{produto.nome}
 							</li>
 						))}
 					</ul>
@@ -68,6 +64,9 @@ const Dashboard = () => {
 					</ul>
 				</div>
 			</div>
+			<button className="btn btn-primary mt-3" onClick={handleInstall}>
+				Instalar App
+			</button>
 		</div>
 	);
 };
